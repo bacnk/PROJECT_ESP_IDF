@@ -1,5 +1,0 @@
-source "C:/Users/admin/Documents/LIB_ESP32_IDF/LIB/components/app_update/Kconfig.projbuild"
-source "C:/Users/admin/Documents/LIB_ESP32_IDF/LIB/components/bootloader/Kconfig.projbuild"
-source "C:/Users/admin/Documents/LIB_ESP32_IDF/LIB/components/esptool_py/Kconfig.projbuild"
-source "C:/Users/admin/Documents/LIB_ESP32_IDF/LIB/components/partition_table/Kconfig.projbuild"
-source "C:/Users/admin/Documents/ESP32_IDF/ssdlcd_esp32/components/ssd1306/Kconfig.projbuild"

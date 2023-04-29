@@ -1,7 +1,0 @@
-source "C:/Users/admin/Documents/LIB_ESP32_IDF/LIB/components/efuse/Kconfig"
-source "C:/Users/admin/Documents/LIB_ESP32_IDF/LIB/components/esp32/Kconfig"
-source "C:/Users/admin/Documents/LIB_ESP32_IDF/LIB/components/esp_common/Kconfig"
-source "C:/Users/admin/Documents/LIB_ESP32_IDF/LIB/components/esp_system/Kconfig"
-source "C:/Users/admin/Documents/LIB_ESP32_IDF/LIB/components/log/Kconfig"
-source "C:/Users/admin/Documents/LIB_ESP32_IDF/LIB/components/newlib/Kconfig"
-source "C:/Users/admin/Documents/LIB_ESP32_IDF/LIB/components/spi_flash/Kconfig"
