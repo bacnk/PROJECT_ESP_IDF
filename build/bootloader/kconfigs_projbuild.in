@@ -1,3 +1,0 @@
-source "C:/Users/admin/Documents/LIB_ESP32_IDF/LIB/components/bootloader/Kconfig.projbuild"
-source "C:/Users/admin/Documents/LIB_ESP32_IDF/LIB/components/esptool_py/Kconfig.projbuild"
-source "C:/Users/admin/Documents/LIB_ESP32_IDF/LIB/components/partition_table/Kconfig.projbuild"

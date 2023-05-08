@@ -1,4 +1,6 @@
-set(component_srcs "ssd1306.c" "ssd1306_i2c.c" "ssd1306_spi.c")
+set(COMPONENT_SRCS 	"websocket.c" "websocket_server.c")
+
+set(COMPONENT_REQUIRES lwip mbedtls)
 
 idf_component_register(SRCS "${component_srcs}"
                        PRIV_REQUIRES driver
