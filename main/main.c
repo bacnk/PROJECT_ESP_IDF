@@ -19,7 +19,7 @@
 #include "lwip/dns.h"
 #include "websocket_server.h"
 #include "websocket.h"
-// #include "gps.h"
+#include "gps.h"
 #include "connect_wifi.h"
 #include "freertos/message_buffer.h"
 MessageBufferHandle_t xMessageBufferToClient;

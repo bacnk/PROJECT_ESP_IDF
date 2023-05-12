@@ -1,18 +1,22 @@
 #include "gps.h"
-#include "string.h"
-void process_gps_data(gps_info_t* gps_info,const char* gps_data)
+#include <string.h>
+
+// Hàm xử lý dữ liệu GPS
+void process_gps_data(gps_info_t* gps_info, const char* gps_data)
 {
-    const char* pch = strstr(gps_data, "GPRMC");
-    if(pch == NULL)
-    {
+    // Tìm bản tin GPRMC trong dữ liệu GPS
+    const char* pch = strstr(gps_data, "$GPRMC");
+    if (pch == NULL) {
+        // Không tìm thấy bản tin GPRMC
         return;
     }
-    pch +=7;
-    uint8_t i=0;
-    char * field;
-    pch +=7;
-    while ((field = strsep((char**)&pch, " ")) != NULL)
- switch (i) {
+
+    // Phân tích thông tin từ bản tin GPRMC và lưu trữ vào gps_info
+    pch += 7;   // Bỏ qua ký tự '$' và chuỗi "GPRMC,"
+    uint8_t i = 0;
+    char* field;
+    while ((field = strsep((char**)&pch, ",")) != NULL) {
+        switch (i) {
         case 0:
             // Giờ
             if (strlen(field) >= 6) {
@@ -63,4 +67,4 @@ void process_gps_data(gps_info_t* gps_info,const char* gps_data)
             break;
         }
     }
-    
+}
