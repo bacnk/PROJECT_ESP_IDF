@@ -8,8 +8,7 @@
     },
     "idf.espIdfPathWin": "d:\\Bacnk_2023\\LIB_esp32\\esp-idf",
     "idf.openOcdConfigs": [
-        "interface/ftdi/esp32_devkitj_v1.cfg",
-        "target/esp32.cfg"
+        "board/esp32-wrover-kit-3.3v.cfg"
     ],
     "idf.portWin": "COM8",
     "idf.pythonBinPathWin": "d:\\Bacnk_2023\\LIB_esp32\\tool\\python_env\\idf4.3_py3.8_env\\Scripts\\python.exe",
@@ -19,6 +18,14 @@
         "websocket_server.h": "c",
         "esp_log.h": "c",
         "connect_wifi.h": "c",
-        "font8x8_basic.h": "c"
+        "font8x8_basic.h": "c",
+        "task.h": "c",
+        "event_groups.h": "c",
+        "nvs_flash.h": "c",
+        "sys.h": "c",
+        "gps.h": "c",
+        "*.inc": "c",
+        "esp_system.h": "c",
+        "stdint.h": "c"
     }
 }
