@@ -32,14 +32,16 @@ uint8_t validCheckSum(char *gpsdata)
     return 0;
 }
 
-void process_gps_data(void)
+void process_gps_data(char *data)
 {
     uint8_t pos = 0, length = 0, i = 0;
     double tempf = 0;
     char gpsConver[12];
     
+    char *gpsMsg = strstr((char *)&data[pos],"$GPRMC");
     if(gpsMsg != NULL)
     {
+        		if(validCheckSum(gpsMsg) == 0) return; 
 
     }
 }
