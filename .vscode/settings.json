@@ -26,6 +26,11 @@
         "gps.h": "c",
         "*.inc": "c",
         "esp_system.h": "c",
-        "stdint.h": "c"
+        "stdint.h": "c",
+        "esp_event.h": "c",
+        "stdlib.h": "c",
+        "sstream": "c",
+        "*.ipp": "c",
+        "ctype.h": "c"
     }
 }

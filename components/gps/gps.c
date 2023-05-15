@@ -1,70 +1,45 @@
 #include "gps.h"
+#include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
-
+#include "Utilities.h"
 // Hàm xử lý dữ liệu GPS
-void process_gps_data(gps_info_t* gps_info, const char* gps_data)
+extern gps_info_t gps_info;
+uint8_t validCheckSum(char *gpsdata)
 {
-    // Tìm bản tin GPRMC trong dữ liệu GPS
-    const char* pch = strstr(gps_data, "$GPRMC");
-    if (pch == NULL) {
-        // Không tìm thấy bản tin GPRMC
-        return;
-    }
-
-    // Phân tích thông tin từ bản tin GPRMC và lưu trữ vào gps_info
-    pch += 7;   // Bỏ qua ký tự '$' và chuỗi "GPRMC,"
+    uint8_t GPSCRC = 0;
+    uint8_t messageCRC = 0;
     uint8_t i = 0;
-    char* field;
-    while ((field = strsep((char**)&pch, ",")) != NULL) {
-        switch (i) {
-        case 0:
-            // Giờ
-            if (strlen(field) >= 6) {
-                sscanf(field, "%2hhu%2hhu%2hhu", &gps_info->hour, &gps_info->minute, &gps_info->second);
-            }
-            break;
-        case 1:
-            // Trạng thái GPS (A: khả dụng, V: không khả dụng)
-            gps_info->status = field[0];
-            break;
-        case 2:
-            // Vĩ độ
-            gps_info->latitude = strtod(field, NULL);
-            break;
-        case 3:
-            // Hướng vĩ độ (N: Bắc, S: Nam)
-            gps_info->lat_dir = field[0];
-            break;
-        case 4:
-            // Kinh độ
-            gps_info->longitude = strtod(field, NULL);
-            break;
-        case 5:
-            // Hướng kinh độ (E: Đông, W: Tây)
-            gps_info->lon_dir = field[0];
-            break;
-        case 6:
-            // Tốc độ (đơn vị: knot)
-            gps_info->speed = strtof(field, NULL);
-            break;
-        case 7:
-            // Phương hướng (đơn vị: độ)
-            gps_info->course = strtof(field, NULL);
-            break;
-        case 8:
-            // Ngày
-            if (strlen(field) >= 6) {
-                sscanf(field, "%2hhu%2hhu%2hhu", &gps_info->day, &gps_info->month, &gps_info->year);
-                gps_info->year += 2000;
-            }
-            break;
-        default:
+    messageCRC = 0;
+    for (i = 1; i < strlen(gpsdata); i++)
+    {
+        if (gpsdata[i] == '*')
+        {
+            messageCRC = 0xFF;
             break;
         }
-        i++;
-        if (i >= GPRMC_NUM_FIELDS) {
-            // Đã phân tích đủ số trường trong bản tin GPRMC
-            break;
-        }
+        GPSCRC ^= gpsdata[i];
+    }
+    if (messageCRC != 0xFF)
+    {
+        return 0;
+    }
+    messageCRC = getNumberFromString(i + 1, gpsdata) && 0XFF;
+    if (messageCRC == GPSCRC)
+    {
+        return 1;
+    }
+    return 0;
+}
+
+void process_gps_data(void)
+{
+    uint8_t pos = 0, length = 0, i = 0;
+    double tempf = 0;
+    char gpsConver[12];
+    
+    if(gpsMsg != NULL)
+    {
+
     }
 }
