@@ -3,12 +3,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+static uint8_t NewGPSData = 0;
+static uint8_t SendOnlyGPRMC = 0;
 
-typedef struct {
-  uint8_t hour;   // Giờ
-  uint8_t minute; // Phút
-  uint8_t second; // Giây
-  char status;    // Trạng thái GPS (A: khả dụng, V: không khả dụng)
+uint8_t UBX_Message[20];
+uint8_t UBX_Index;
+typedef struct
+{
+  uint8_t hour;     // Giờ
+  uint8_t minute;   // Phút
+  uint8_t second;   // Giây
+  char status;      // Trạng thái GPS (A: khả dụng, V: không khả dụng)
   double latitude;  // Vĩ độ
   char lat_dir;     // Hướng vĩ độ (N: Bắc, S: Nam)
   double longitude; // Kinh độ
@@ -19,24 +24,28 @@ typedef struct {
   uint8_t month;    // Tháng
   uint16_t year;    // Năm
 } gps_info_t;
-uint32_t getNumberFromString(uint16_t BeginAddress, char *Buffer) {
+uint32_t getNumberFromString(uint16_t BeginAddress, char *Buffer)
+{
 
   uint16_t i = 0;
   i = BeginAddress;
   uint32_t hexNumber = 0;
 
   // Skip any leading white space
-  while (isspace(Buffer[i])) {
+  while (isspace(Buffer[i]))
+  {
     i++;
   }
 
   // Skip "0x" prefix if present
-  if (Buffer[i] == '0' && (Buffer[i + 1] == 'x' || Buffer[i + 1] == 'X')) {
+  if (Buffer[i] == '0' && (Buffer[i + 1] == 'x' || Buffer[i + 1] == 'X'))
+  {
     i += 2;
   }
 
   // Parse the hex number
-  while (isxdigit(Buffer[i])) {
+  while (isxdigit(Buffer[i]))
+  {
     char c = tolower(Buffer[i]);
     uint8_t nibble = (c >= 'a' && c <= 'f') ? (c - 'a' + 10) : (c - '0');
     hexNumber = (hexNumber << 4) | nibble;
@@ -45,14 +54,16 @@ uint32_t getNumberFromString(uint16_t BeginAddress, char *Buffer) {
 
   return hexNumber;
 }
-void process_gps_data(char *data, gps_info_t *gps_info) {
+void process_gps_data(char *data, gps_info_t *gps_info)
+{
   uint8_t pos = 0, length = 0, i = 0, valid = 0;
   double tempf = 0;
   uint32_t temp = 0;
   char gpsConver[200];
 
-  char *gpsMsg = strstr(data, "$GPRMC");
-  if (gpsMsg != NULL) {
+  char *gpsMsg = strstr(data, "$GNRMC");
+  if (gpsMsg != NULL)
+  {
     pos += 6; // Skip "$GPRMC"
     while (gpsMsg[pos] != ',')
       pos++;
@@ -73,7 +84,8 @@ void process_gps_data(char *data, gps_info_t *gps_info) {
       pos++;
     pos++;
     // Check GPS status
-    if (data[pos] != 'A') {
+    if (data[pos] != 'A')
+    {
       valid = 0;
       return;
     }
@@ -88,7 +100,8 @@ void process_gps_data(char *data, gps_info_t *gps_info) {
       length++;
     gps_info->latitude = 0;
     length -= 2;
-    for (i = 0; i < length; i++) {
+    for (i = 0; i < length; i++)
+    {
       gps_info->latitude = gps_info->latitude * 10 + (gpsMsg[pos++] - '0');
     }
     i = 0;
@@ -112,7 +125,8 @@ void process_gps_data(char *data, gps_info_t *gps_info) {
       length++;
     gps_info->longitude = 0;
     length -= 2;
-    for (i = 0; i < length; i++) {
+    for (i = 0; i < length; i++)
+    {
       gps_info->longitude = gps_info->longitude * 10 + (gpsMsg[pos++] - '0');
     }
     i = 0;
@@ -138,37 +152,38 @@ void process_gps_data(char *data, gps_info_t *gps_info) {
     temp = temp * 13;
     temp = temp / 7020;
     gps_info->speed = temp & 0xFFFF;
-        //////////// 
+    ////////////
     while (gpsMsg[pos] != ',')
-        pos++;
-    pos++; 
-    i=0;
+      pos++;
+    pos++;
+    i = 0;
     while (gpsMsg[pos] != ',')
-    gpsConver[i++] = gpsMsg[pos++];
-    gpsConver[i] ='\0';
-      gps_info->course = atof(gpsConver);
-      // 
-      while (gpsMsg[pos] != ',')
-            pos++;
-        pos++;
-         gps_info->day = (data[pos] - '0') * 10 + (data[pos + 1] - '0');
-        pos += 2;
-         gps_info->month = (data[pos] - '0') * 10 + (data[pos + 1] - '0');
-        pos += 2;
-         gps_info->year = (data[pos] - '0') * 10 + (data[pos + 1] - '0');
-        pos += 2;
-          if ( gps_info->speed >= 180)
-        {
-            gps_info->speed = 0;
-            // Phân tích xong
-            return;
-        }
+      gpsConver[i++] = gpsMsg[pos++];
+    gpsConver[i] = '\0';
+    gps_info->course = atof(gpsConver);
+    //
+    while (gpsMsg[pos] != ',')
+      pos++;
+    pos++;
+    gps_info->day = (data[pos] - '0') * 10 + (data[pos + 1] - '0');
+    pos += 2;
+    gps_info->month = (data[pos] - '0') * 10 + (data[pos + 1] - '0');
+    pos += 2;
+    gps_info->year = (data[pos] - '0') * 10 + (data[pos + 1] - '0');
+    pos += 2;
+    if (gps_info->speed >= 180)
+    {
+      gps_info->speed = 0;
+      // Phân tích xong
+      return;
+    }
   }
 }
 
-int main() {
+int main()
+{
   char gps_data[] =
-      "$GPRMC,220516,A,5133.82,N,00042.24,W,173.8,231.8,130694,004.2,W*70";
+      "$GNRMC,073754.00,A,2100.49298,N,10548.45887,E,1.015,292.99,180523,,,A*70";
 
   gps_info_t gps_info;
   process_gps_data(gps_data, &gps_info);
@@ -180,8 +195,8 @@ int main() {
   printf("Latitude: %.5lf %c\n", gps_info.latitude, gps_info.lat_dir);
   printf("longitude: %.5lf %c\n", gps_info.longitude, gps_info.lon_dir);
   printf("SPEDD: %.2f\n", gps_info.speed);
-    printf("course: %.2f\n", gps_info.course);
-    printf("date: %02d-%02d-%02d\n", gps_info.day, gps_info.month,
+  printf("course: %.2f\n", gps_info.course);
+  printf("date: %02d-%02d-%02d\n", gps_info.day, gps_info.month,
          gps_info.year);
 
   return 0;
